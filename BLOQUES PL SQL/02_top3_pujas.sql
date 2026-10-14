@@ -41,7 +41,8 @@ BEGIN
 
     -- Extracción de las mejores ofertas uniendo con la tabla USUARIO mediante PNOMBRE y PAPELLIDO
     FOR reg IN (
-        SELECT u.PNOMBRE || ' ' || u.PAPELLIDO AS nom_completo, o.MONTO 
+        SELECT u.PNOMBRE || ' ' || u.PAPELLIDO AS nom_completo,
+        o.MONTO 
         FROM OFERTA o
         JOIN USUARIO u ON o.ID_USUARIO = u.ID_USUARIO
         WHERE o.ID_SUBASTA = v_id_subasta 

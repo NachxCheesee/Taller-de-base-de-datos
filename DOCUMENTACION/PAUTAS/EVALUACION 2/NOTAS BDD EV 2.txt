@@ -1,0 +1,48 @@
+Diferenciar procedimientos, funciones, packages y triggers.
+
+Identificar las relaciones y dependencias entre los objetos.
+
+primero mostrar la tabla la cual el trigger va a modificar
+
+en la presentación bloque anonimo que tiene que mandar a llamr al paquete el cual puede llamar un procedimiento o función etc etc
+
+después el trigger ya habrá hecho efecto
+
+
+
+
+DURANTE LA PRESENTACION ES SOLO EJECUTAR UN BLOQUE ANONIMO QUE EJECUTE UN PAQUETE
+
+
+Podria ser como un bloque anonimo el cual ejecuta cosas como cambiar la oferta de un coso aplicando un descuento con porcentaje o algo y además asi se dispara el trigger 
+
+
+borrar y recrear el usuario 
+
+-- 1. Eliminar el usuario y todos sus objetos en cascada
+DROP USER nombre_de_usuario CASCADE;
+
+-- 2. Volver a crear el usuario
+CREATE USER nombre_de_usuario IDENTIFIED BY tu_contraseña;
+
+-- 3. Asignarle permisos necesarios
+GRANT CONNECT, RESOURCE, DBA TO nombre_de_usuario;
+ALTER USER nombre_de_usuario QUOTA UNLIMITED ON USERS;
+
+
+que tareas podrían automatizarse a través de pl sql?
+
+
+SE LLAMA A TRAVES DEL PAQUETE
+
+BLO0QUE ANONIMO
+
+SE EJECUTA TRIGGER POR DEBAJO
+
+FUNCION PRINCIPAL
+
+TERMINA BLOQUE ANONIMO
+ 
+
+ 
+MIERCOLES DE LA OTRA OTRA QUIZ
