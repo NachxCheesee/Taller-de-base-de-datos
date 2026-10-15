@@ -5,14 +5,18 @@ Empaquetar y modularizar la lógica de negocio para la administración y control
 de precios del catálogo en ChileRemates. El paquete define una interfaz pública
 y su correspondiente cuerpo de implementación, desacoplando responsabilidades:
 
-1. Función 'fn_calcular_variacion':
-   Calcula la variación porcentual entre el valor previo y el nuevo (+ alza, 
-   - rebaja). 
+- Función privada 'fn_validar_monto':
+  Componente interno de validación de negocio que no se expone en la cabecera,
+  demostrando encapsulamiento al ser accesible únicamente dentro del body.
 
-2. Procedimiento 'sp_actualizar_precio_producto':
-   Orquesta la modificación de precios validando la existencia del producto 
-   y ejecutando la actualización en la tabla PRODUCTO, lo que activa 
-   de forma transparente la auditoría histórica.
+- Función pública 'fn_calcular_variacion':
+  Calcula la variación porcentual entre el valor previo y el nuevo (+ alza, 
+  - rebaja), apoyándose en la función privada para validar montos válidos.
+
+- Procedimiento público 'sp_actualizar_precio_producto':
+  Orquesta la modificación de precios validando la existencia del producto,
+  frenando cambios redundantes y ejecutando la actualización en la tabla PRODUCTO,
+  lo que activa de forma transparente la auditoría histórica.
 ============================================================================
 */
 
@@ -41,6 +45,22 @@ END PKG_GESTION_PRODUCTOS;
 -- ============================================================================
 CREATE OR REPLACE PACKAGE BODY PKG_GESTION_PRODUCTOS AS
 
+    -- ========================================================================
+    -- ELEMENTO PRIVADO
+    -- ========================================================================
+    FUNCTION fn_validar_monto (p_monto NUMBER) RETURN BOOLEAN IS
+    BEGIN
+        -- Bloquea montos negativos (permite 0 en caso de regalos)
+        IF p_monto < 0 THEN
+            RETURN FALSE;
+        END IF;
+        RETURN TRUE;
+    END fn_validar_monto;
+
+    -- ========================================================================
+    -- ELEMENTOS PÚBLICOS
+    -- ========================================================================
+
     -- Implementación de la Función de variación
     FUNCTION fn_calcular_variacion (
         p_precio_anterior NUMBER,
@@ -48,8 +68,8 @@ CREATE OR REPLACE PACKAGE BODY PKG_GESTION_PRODUCTOS AS
     ) RETURN NUMBER IS
         v_variacion NUMBER(6,2);
     BEGIN
-        -- Validación básica: no permitir montos negativos
-        IF p_precio_nuevo < 0 THEN
+        -- Uso de la función privada para validar el monto nuevo
+        IF NOT fn_validar_monto(p_precio_nuevo) THEN
             RAISE_APPLICATION_ERROR(-20001, 'El precio nuevo no puede ser negativo.');
         END IF;
 

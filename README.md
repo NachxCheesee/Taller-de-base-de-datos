@@ -38,9 +38,30 @@ Repositorio que contiene una base de datos y bloques anónimos en PL/SQL orienta
 - **Preservación e Integridad**: Uso exclusivo de actualizaciones de estado (`UPDATE`) e inserciones transaccionales, asegurando que toda la información se preserve en el historial.
 
 ## Orden de Ejecución Recomendado
-1. `BASE DE DATOS/script_completo_marketplace_subastas.sql` (Estructura relacional e inserts base).
-2. `PAQUETES/pkg_gestion_productos.sql` (Cabecera y cuerpo del paquete).
-3. `TRIGGERS/trg_auditoria_precios.sql` (Trigger de auditoría dependiente del paquete).
+
+### 1. Estructura e Información Base
+1. `BASE DE DATOS/script_completo_marketplace_subastas.sql`
+   - Crea el esquema relacional, constraints, tablas históricas e inserts base.
+
+### 2. Funciones y Paquetes (Lógica Central)
+2. `FUNCIONES/fn_obtener_comision_plataforma.sql`
+   - Compila la función global de tasa de comisión requerida por los procedimientos de cierre.
+3. `PAQUETES/pkg_gestion_productos.sql`
+   - Compila la especificación y el cuerpo del paquete de administración de precios.
+
+### 3. Procedimientos y Triggers (Dependientes)
+4. `PROCEDIMIENTOS/sp_cerrar_subastas_vencidas.sql`
+   - Procedimiento de cierre masivo (consume `fn_obtener_comision_plataforma`).
+5. `TRIGGERS/trg_auditoria_precios.sql`
+   - Trigger a nivel de fila para auditoría (consume `PKG_GESTION_PRODUCTOS`).
+6. `TRIGGERS/trg_restringir_borrado_productos.sql`
+   - Trigger a nivel de sentencia para bloqueo de `DELETE` físico.
+
+### 4. Bloques Anónimos de Prueba y Operación
+7. `BLOQUES PL SQL/01_registro_oferta.sql` (Registro de nueva puja con validaciones).
+8. `BLOQUES PL SQL/02_top3_pujas.sql` (Consulta en memoria del podio mediante VARRAY y RECORD).
+9. `BLOQUES PL SQL/03_cierre_subastas.sql` (Dispara la ejecución de `sp_cerrar_subastas_vencidas`).
+10. `BLOQUES PL SQL/04_ejecucion_paquete.sql` (Prueba de alza/baja de precios y verificación del trigger de auditoría).
 
 ## Requisitos y Entorno
 * **Motor de Base de Datos**: Oracle Database (compatible con versiones 19c, 21c o 23c).
